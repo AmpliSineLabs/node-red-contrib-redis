@@ -395,7 +395,8 @@ function RedisConfig(n) {
     }
     try {
       if (config.cluster) {
-        connections[id] = new Redis.Cluster(options);
+        let { startupNodes, clusterOptions } = clusterConfig(options);
+        connections[id] = new Redis.Cluster(startupNodes, clusterOptions);
       } else {
         connections[id] = new Redis(options);
       }
@@ -411,6 +412,36 @@ function RedisConfig(n) {
     } catch (e) {
       config.error(e.message, null);
     }
+  }
+
+  function clusterConfig(options) {
+    let startupNodes;
+    let clusterOptions = {};
+
+    if (Array.isArray(options) || typeof options === "string") {
+      startupNodes = [].concat(options);
+    } else if (options.startupNodes) {
+      startupNodes = options.startupNodes;
+      clusterOptions = options.clusterOptions || {};
+    } else {
+      // Single endpoint object, e.g. an AWS configuration endpoint. host/port
+      // seed cluster discovery and everything else (tls, username, password,
+      // db, ...) is applied to every discovered node.
+      let { host, port, ...redisOptions } = options;
+      startupNodes = [{ host: host || "localhost", port: port || 6379 }];
+      if (Object.keys(redisOptions).length > 0) {
+        clusterOptions.redisOptions = redisOptions;
+      }
+    }
+
+    if (clusterOptions.dnsLookup === undefined) {
+      // Keep node hostnames instead of resolving them to IPs first, otherwise
+      // TLS certificate checks fail on managed clusters like AWS ElastiCache
+      // and MemoryDB.
+      clusterOptions.dnsLookup = (address, callback) => callback(null, address);
+    }
+
+    return { startupNodes, clusterOptions };
   }
 
   function disconnect(id) {

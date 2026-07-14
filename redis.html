@@ -49,6 +49,42 @@
     </div>
 </script>
 
+<script type="text/x-red" data-help-name="redis-config">
+    <p>Connection settings shared by the Redis nodes. Options are passed to
+    <a href="https://github.com/redis/ioredis" target="_blank">ioredis</a>.</p>
+
+    <h3>Standalone</h3>
+    <p>With <b>Cluster</b> unticked, Options is a single
+    <a href="https://redis.github.io/ioredis/index.html#RedisOptions" target="_blank">RedisOptions</a>
+    object, e.g. <code>{"host": "redis.local", "port": 6379, "password": "secret"}</code>.</p>
+
+    <h3>Cluster</h3>
+    <p>With <b>Cluster</b> ticked, Options may be any of:</p>
+    <ul>
+        <li>A single endpoint object, e.g. a cluster configuration endpoint. The
+        <code>host</code>/<code>port</code> seed cluster discovery and every other
+        property (<code>tls</code>, <code>username</code>, <code>password</code>, ...)
+        is applied to each discovered shard:
+        <pre>{
+  "host": "clustercfg.example.memorydb.amazonaws.com",
+  "port": 6379,
+  "username": "app",
+  "password": "secret",
+  "tls": {}
+}</pre></li>
+        <li>An array of startup nodes: <code>[{"host": "a", "port": 7000}, {"host": "b", "port": 7001}]</code></li>
+        <li>The full ioredis cluster shape, for control over
+        <a href="https://redis.github.io/ioredis/interfaces/ClusterOptions.html" target="_blank">ClusterOptions</a>:
+        <pre>{
+  "startupNodes": [{"host": "a", "port": 7000}],
+  "clusterOptions": {"redisOptions": {"tls": {}}, "scaleReads": "slave"}
+}</pre></li>
+    </ul>
+    <p>Cluster connections keep node hostnames instead of pre-resolving them to IP
+    addresses, so TLS certificate validation works against managed clusters such as
+    AWS ElastiCache and MemoryDB.</p>
+</script>
+
 <script type="text/javascript">
     /*global RED*/
     RED.nodes.registerType('redis-in', {
