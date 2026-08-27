@@ -54,5 +54,5 @@ jobs:
           gh pr create \
             --title "v${VERSION}" \
             --body "Automated ${{ inputs.bump }} version bump to ${VERSION}." \
-            --base main \
+            --base master \
             --head "$BRANCH"
