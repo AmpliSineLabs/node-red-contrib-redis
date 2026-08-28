@@ -21,15 +21,15 @@ I need contributors...
 
 Redis Commands:
 
-![Redis Command](https://github.com/chameleonbr/node-red-examples/raw/master/images/Node-RED_cmd_cfg.png "Redis Command")
+![Redis Command](https://github.com/AmpliSineLabs/node-red-examples/raw/master/images/Node-RED_cmd_cfg.png "Redis Command")
 
 Payload -> Redis
 
-![Payload -> Redis](https://github.com/chameleonbr/node-red-examples/raw/master/images/Node-RED_redis_params.png "Payload -> Redis")
+![Payload -> Redis](https://github.com/AmpliSineLabs/node-red-examples/raw/master/images/Node-RED_redis_params.png "Payload -> Redis")
 
 Redis Queue:
 
-![Payload -> Redis](https://github.com/chameleonbr/node-red-examples/raw/master/images/Node-RED_in_out.png "Payload -> Redis")
+![Payload -> Redis](https://github.com/AmpliSineLabs/node-red-examples/raw/master/images/Node-RED_in_out.png "Payload -> Redis")
 
 Sample flow: 
 ```javascript
