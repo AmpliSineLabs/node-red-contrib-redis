@@ -5,6 +5,8 @@ Connection Options parameter receives IORedis object or string (https://github.c
 
 Now uses same connection per config name and open new if you set block connection option.
 
+Requires Node.js 20 or newer (ioredis 6). Connections use the RESP2 protocol by default so replies keep the same shape as before; add `"protocol": 3` to the connection options (or `?protocol=3` to a URL) to opt into RESP3.
+
 Roadmap:
 - (ok)Stream Support
 - (ok)Flow or Global redis instance injection to use on function Node.
