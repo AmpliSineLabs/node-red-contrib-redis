@@ -4,6 +4,10 @@ module.exports = function (RED) {
   const async = require("async");
   let connections = {};
   let usedConn = {};
+  // ioredis 6 defaults to RESP3, which changes the shape of some replies
+  // (ZRANGE WITHSCORES, XREAD, HRANDFIELD WITHVALUES, ...). Stay on RESP2 so
+  // existing flows keep working; set "protocol": 3 in the server options to opt in.
+  const RESP2_DEFAULTS = { protocol: 2 };
 
 function RedisConfig(n) {
     RED.nodes.createNode(this, n);
@@ -398,7 +402,8 @@ function RedisConfig(n) {
         let { startupNodes, clusterOptions } = clusterConfig(options);
         connections[id] = new Redis.Cluster(startupNodes, clusterOptions);
       } else {
-        connections[id] = new Redis(options);
+        // Extra args only fill in options the user didn't set (string URLs included)
+        connections[id] = new Redis(options, RESP2_DEFAULTS);
       }
 
       connections[id].on("error", (e) => {
@@ -440,6 +445,8 @@ function RedisConfig(n) {
       // and MemoryDB.
       clusterOptions.dnsLookup = (address, callback) => callback(null, address);
     }
+
+    clusterOptions.redisOptions = { ...RESP2_DEFAULTS, ...clusterOptions.redisOptions };
 
     return { startupNodes, clusterOptions };
   }
